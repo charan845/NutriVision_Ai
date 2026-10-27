@@ -1,0 +1,4 @@
+ConvNeXt Weight (%),Swin Weight (%),Accuracy (%),Macro F1 (%)
+30,70,83.68,83.73
+50,50,85.16,85.08
+70,30,83.98,83.95

@@ -1,0 +1,14 @@
+.streamlit/secrets.toml
+.env
+.env.*
+*.pth
+*.pt
+*.ckpt
+chroma_db/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+venv/
+.venv/
+*.log
+.DS_Store

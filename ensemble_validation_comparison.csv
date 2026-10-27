@@ -1,0 +1,4 @@
+Model,Accuracy (%),Macro F1 (%)
+ConvNeXt Base,83.09,83.0
+Swin Transformer Base,83.09,82.95
+50/50 Soft-Voting Ensemble,85.16,85.08

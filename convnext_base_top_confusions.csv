@@ -1,0 +1,16 @@
+Actual Food,Predicted Food,Misclassified Images
+chicken_tikka_masala,chicken_tikka,6
+kadai_paneer,aloo_shimla_mirch,4
+butter_chicken,chicken_tikka,3
+chicken_tikka,chicken_tikka_masala,3
+aloo_matar,aloo_shimla_mirch,2
+naan,butter_naan,2
+chicken_tikka,butter_chicken,2
+cham_cham,rasgulla,2
+butter_naan,naan,2
+butter_chicken,aloo_gobi,1
+biryani,aloo_gobi,1
+biryani,kachori,1
+aloo_tikki,aloo_shimla_mirch,1
+aloo_shimla_mirch,aloo_matar,1
+aloo_gobi,aloo_shimla_mirch,1

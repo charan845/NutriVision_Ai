@@ -1,0 +1,32 @@
+{
+    "project": "NutriVision AI",
+    "task": "45-class food image classification",
+    "selected_model": "50/50 Soft-Voting Ensemble",
+    "component_models": [
+        "ConvNeXt Base",
+        "Swin Transformer Base"
+    ],
+    "ensemble_weights": {
+        "ConvNeXt Base": 0.5,
+        "Swin Transformer Base": 0.5
+    },
+    "dataset": {
+        "total_images": 2250,
+        "classes": 45,
+        "training_images": 1575,
+        "validation_images": 337,
+        "test_images": 338
+    },
+    "validation_metrics": {
+        "accuracy_percent": 85.16,
+        "macro_f1_percent": 85.08
+    },
+    "test_metrics": {
+        "accuracy_percent": 84.91,
+        "macro_precision_percent": 86.11,
+        "macro_recall_percent": 84.88,
+        "macro_f1_percent": 84.82
+    },
+    "test_images_correct": 287,
+    "evaluation_date": "2026-10-27"
+}
