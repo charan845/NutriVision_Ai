@@ -1,0 +1,46 @@
+food,calories_kcal,protein_g,carbs_g,fat_g,fiber_g,sugar_g,typical_serving_g,confidence,description
+aloo_gobi,90,2.2,11,4.5,2.5,2.0,150,medium,Dry curry of potato and cauliflower with onion tomato and spices
+aloo_matar,95,3.0,13,3.8,3.0,2.5,150,medium,Potato and green peas cooked in a spiced tomato onion gravy
+aloo_methi,100,2.5,12,5.0,3.0,1.5,120,medium,Dry stir fry of potato with fenugreek leaves
+aloo_shimla_mirch,85,1.8,11,4.0,2.2,2.5,120,medium,Potato and capsicum stir fry with Indian spices
+aloo_tikki,190,3.5,25,8.5,2.5,1.5,60,medium,Shallow fried spiced potato patty popular as street food
+bhindi_masala,95,2.2,8,6.0,3.2,2.5,120,medium,Okra sauteed with onion tomato and spices
+biryani,165,8.0,22,5.0,1.0,1.0,250,medium,Layered spiced rice dish with meat or vegetables (chicken style assumed)
+butter_chicken,150,11,5,9.5,0.8,3.0,200,medium,Tandoori chicken in a creamy tomato butter gravy
+butter_naan,310,8.5,48,9.0,2.0,3.0,90,medium,Leavened tandoor bread brushed with butter
+cham_cham,300,6.0,52,7.0,0.0,45,60,low,Bengali milk based sweet soaked in sugar syrup
+chana_masala,140,6.5,18,5.0,5.0,3.0,180,medium,Chickpeas cooked in a spiced onion tomato gravy
+chapati,297,9.5,55,3.7,4.5,1.5,40,medium,Unleavened whole wheat flatbread cooked on a griddle
+chicken_curry,135,12,4,8.0,1.0,2.0,200,medium,Chicken pieces cooked in onion tomato spiced gravy
+chicken_tikka,150,24,3,5.0,0.5,1.5,100,medium,Yogurt marinated chicken pieces grilled in a tandoor
+chicken_tikka_masala,140,11,6,8.0,1.0,3.5,200,medium,Chicken tikka in a spiced creamy tomato gravy
+chole_bhature,280,7.0,33,13,4.0,2.0,250,low,Spiced chickpea curry served with deep fried leavened bread
+crispy-chicken,270,18,12,17,0.5,0.5,120,low,Breaded deep fried chicken pieces
+daal_baati_churma,330,8.0,42,14,4.0,6.0,250,low,Rajasthani meal of lentils baked wheat balls and sweet crumbled churma
+dal_makhani,130,6.0,13,6.0,4.0,1.5,200,medium,Slow cooked black lentils and kidney beans with butter and cream
+dal_tadka,110,6.0,14,3.5,3.5,1.5,200,medium,Yellow lentils tempered with ghee cumin garlic and chilli
+dhokla,160,6.0,24,4.5,2.0,5.0,80,medium,Steamed fermented gram flour cake from Gujarat
+double_ka_meetha,330,6.0,42,16,1.0,28,100,low,Hyderabadi bread pudding fried and soaked in sweet milk and nuts
+fried_rice,165,4.5,26,5.0,1.2,1.0,200,medium,Stir fried rice with vegetables and egg or chicken
+gajar_ka_halwa,190,3.8,26,8.0,1.5,22,100,medium,Grated carrot slow cooked in milk sugar and ghee
+gulab_jamun,300,5.0,46,11,0.5,38,50,medium,Deep fried milk solid balls soaked in sugar syrup
+idli,130,4.0,26,0.4,1.0,0.5,80,medium,Steamed fermented rice and lentil cake
+jalebi,400,3.0,65,15,0.5,50,40,medium,Deep fried fermented batter spirals soaked in sugar syrup
+kachori,400,7.0,40,24,3.0,2.0,60,low,Deep fried pastry stuffed with spiced lentil or pea filling
+kadai_paneer,200,9.0,6,16,1.5,3.0,150,medium,Paneer cooked with capsicum and ground kadai spices
+kadhi_pakoda,130,4.5,11,8.0,1.0,3.0,200,medium,Yogurt and gram flour curry with fried fritters
+karela_bharta,100,2.5,8,7.0,3.5,2.0,100,low,Mashed or stuffed bitter gourd cooked with onion and spices
+masala_dosa,190,4.0,27,7.5,2.0,1.0,180,medium,Crisp fermented rice lentil crepe filled with spiced potato
+modak,230,3.0,40,6.5,2.5,22,40,low,Steamed dumpling with sweet coconut and jaggery filling
+momos,190,9.0,26,5.5,1.5,1.0,100,low,Steamed dumplings with vegetable or chicken filling
+mysore_pak,520,6.0,45,35,1.5,35,40,low,Dense sweet made of gram flour ghee and sugar
+naan,290,9.0,50,5.0,2.0,3.0,90,medium,Leavened tandoor baked white flour bread
+paani_puri,210,3.5,32,8.0,2.5,3.0,100,low,Crisp hollow puris filled with spiced water potato and chickpeas
+palak_paneer,130,7.0,5,9.5,2.0,1.5,180,medium,Paneer cubes in a spiced spinach gravy
+paneer_butter_masala,210,8.0,8,16.5,1.0,4.5,180,medium,Paneer in a creamy buttery tomato gravy
+pav_bhaji,170,4.5,24,6.5,3.5,3.5,250,medium,Spiced mashed vegetable curry served with buttered bread rolls
+poha,130,2.7,22,3.5,1.5,1.5,150,medium,Flattened rice sauteed with onion peanuts turmeric and mustard seeds
+qubani_ka_meetha,190,2.0,38,4.0,4.0,32,120,low,Hyderabadi stewed dried apricot dessert served with cream
+ras_malai,190,6.0,24,8.0,0.0,22,80,low,Soft paneer discs in sweetened thickened milk
+rasgulla,186,4.0,40,1.5,0.0,35,80,medium,Spongy paneer balls in light sugar syrup
+samosa,262,4.5,28,15,2.5,1.5,60,medium,Deep fried pastry filled with spiced potato and peas
