@@ -429,7 +429,6 @@ with tab_predict:
 
                 except Exception as error:
                     st.error(f"Prediction failed: {error}")
-                    st.exception(error)
 
 with tab_assistant:
     st.subheader("Ask the NutriVision AI assistant")
