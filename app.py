@@ -53,6 +53,7 @@ def load_project_data():
     return config, nutrition_df, class_names
 
 
+
 @st.cache_resource
 def load_models():
     config, _, class_names = load_project_data()
@@ -69,40 +70,36 @@ def load_models():
         len(class_names)
     )
 
-    
-convnext_checkpoint_path = (
-    PROJECT_DIR / config["selected_models"]["convnext"]["checkpoint"]
-)
-
-swin_checkpoint_path = (
-    PROJECT_DIR / config["selected_models"]["swin"]["checkpoint"]
-)
-
-if not convnext_checkpoint_path.is_file():
-    raise FileNotFoundError(
-        f"ConvNeXt checkpoint not found: {convnext_checkpoint_path}"
+    convnext_checkpoint_path = (
+        PROJECT_DIR / config["selected_models"]["convnext"]["checkpoint"]
     )
 
-if not swin_checkpoint_path.is_file():
-    raise FileNotFoundError(
-        f"Swin checkpoint not found: {swin_checkpoint_path}"
+    swin_checkpoint_path = (
+        PROJECT_DIR / config["selected_models"]["swin"]["checkpoint"]
     )
 
-convnext_checkpoint = torch.load(
-    convnext_checkpoint_path,
-    map_location="cpu",
-    weights_only=True
-)
+    if not convnext_checkpoint_path.is_file():
+        raise FileNotFoundError(
+            f"ConvNeXt checkpoint not found: {convnext_checkpoint_path}"
+        )
 
-swin_checkpoint = torch.load(
-    swin_checkpoint_path,
-    map_location="cpu",
-    weights_only=True
-)
+    if not swin_checkpoint_path.is_file():
+        raise FileNotFoundError(
+            f"Swin checkpoint not found: {swin_checkpoint_path}"
+        )
 
+    convnext_checkpoint = torch.load(
+        convnext_checkpoint_path,
+        map_location="cpu",
+        weights_only=True
+    )
 
-    # Support the checkpoint format used by this project.
-    # The trained weights are stored under "model_state_dict".
+    swin_checkpoint = torch.load(
+        swin_checkpoint_path,
+        map_location="cpu",
+        weights_only=True
+    )
+
     if isinstance(convnext_checkpoint, dict):
         if "model_state_dict" in convnext_checkpoint:
             convnext_checkpoint = convnext_checkpoint["model_state_dict"]
@@ -122,6 +119,7 @@ swin_checkpoint = torch.load(
     swin = swin.to(DEVICE).eval()
 
     return convnext, swin
+
 
 
 @st.cache_resource
