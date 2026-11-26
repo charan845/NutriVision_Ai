@@ -51,12 +51,12 @@
     "selected_models": {
         "convnext": {
             "architecture": "ConvNeXt Base",
-            "checkpoint": "/content/drive/MyDrive/NutriVision_AI/best_convnext_base.pth",
+            "checkpoint": "models/best_convnext_base.pth",
             "weight": 0.5
         },
         "swin": {
             "architecture": "Swin Transformer Base",
-            "checkpoint": "/content/drive/MyDrive/NutriVision_AI/best_swin_base.pth",
+            "checkpoint": "models/best_swin_base.pth",
             "weight": 0.5
         }
     },
