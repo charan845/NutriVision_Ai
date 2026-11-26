@@ -69,16 +69,37 @@ def load_models():
         len(class_names)
     )
 
-    convnext_checkpoint = torch.load(
-        config["selected_models"]["convnext"]["checkpoint"],
-        map_location="cpu",
-        weights_only=True
+    
+convnext_checkpoint_path = (
+    PROJECT_DIR / config["selected_models"]["convnext"]["checkpoint"]
+)
+
+swin_checkpoint_path = (
+    PROJECT_DIR / config["selected_models"]["swin"]["checkpoint"]
+)
+
+if not convnext_checkpoint_path.is_file():
+    raise FileNotFoundError(
+        f"ConvNeXt checkpoint not found: {convnext_checkpoint_path}"
     )
-    swin_checkpoint = torch.load(
-        config["selected_models"]["swin"]["checkpoint"],
-        map_location="cpu",
-        weights_only=True
+
+if not swin_checkpoint_path.is_file():
+    raise FileNotFoundError(
+        f"Swin checkpoint not found: {swin_checkpoint_path}"
     )
+
+convnext_checkpoint = torch.load(
+    convnext_checkpoint_path,
+    map_location="cpu",
+    weights_only=True
+)
+
+swin_checkpoint = torch.load(
+    swin_checkpoint_path,
+    map_location="cpu",
+    weights_only=True
+)
+
 
     # Support the checkpoint format used by this project.
     # The trained weights are stored under "model_state_dict".
