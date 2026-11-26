@@ -15,10 +15,17 @@ from torchvision import models, transforms
 from google import genai
 
 
-PROJECT_DIR = Path("/content/drive/MyDrive/NutriVision_AI")
-NUTRITION_CSV = Path("/content/drive/MyDrive/nutrition_45_foods.csv")
-CHROMA_DIR = PROJECT_DIR / "chroma_db"
+
+# Resolve all project files relative to this app.py file.
+PROJECT_DIR = Path(__file__).resolve().parent
+
+# Project data
+NUTRITION_CSV = PROJECT_DIR / "data" / "nutrition_45_foods.csv"
+CHROMA_DIR = PROJECT_DIR / "data" / "chroma_db"
+
+# Model configuration
 CONFIG_PATH = PROJECT_DIR / "ensemble_config.json"
+
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
