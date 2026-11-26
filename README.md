@@ -31,26 +31,26 @@ NutriVision AI implements two runtime pipelines in `app.py`:
 
 ## Dataset
 
-The classification models were trained and evaluated on a 45-class food image dataset (predominantly Indian dishes, alongside items such as `crispy-chicken`, `fried_rice`, and `momos`), mapped in `class_mapping.csv` and `ensemble_config.json`. Raw image files are external to this repository; stratified 70% / 15% / 15% splits (`random_state=42`) are recorded in `train.csv`, `validation.csv`, and `test.csv`.
+The classification models were trained and evaluated on a 45-class food image dataset (predominantly Indian dishes, alongside items such as `crispy-chicken`, `fried_rice`, and `momos`), mapped in `data/class_mapping.csv` and `ensemble_config.json`. Raw image files are external to this repository; stratified 70% / 15% / 15% splits (`random_state=42`) are recorded under `data/splits/`.
 
 | Split | Images | Per-Class Count | Percentage | Manifest File |
 |---|---:|---:|---:|---|
-| Training | 1,575 | 35 | 70.0% | `train.csv` |
-| Validation | 337 | 7–8 | 15.0% | `validation.csv` |
-| Test | 338 | 7–8 | 15.0% | `test.csv` |
+| Training | 1,575 | 35 | 70.0% | `data/splits/train.csv` |
+| Validation | 337 | 7–8 | 15.0% | `data/splits/validation.csv` |
+| Test | 338 | 7–8 | 15.0% | `data/splits/test.csv` |
 | **Total** | **2,250** | **50** | **100.0%** | — |
 
-- `data/nutrition_45_foods.csv` contains 45 nutrition records matching every class in `class_mapping.csv`, with columns `food`, `calories_kcal`, `protein_g`, `carbs_g`, `fat_g`, `fiber_g`, `sugar_g`, `typical_serving_g`, `confidence`, and `description` (`confidence` is stored in the CSV and ChromaDB metadata but is not rendered in the `app.py` UI).
-- `train.csv`, `validation.csv`, and `test.csv` store file paths from the original Colab training environment and are intended as split records rather than portable local paths.
+- `data/nutrition_45_foods.csv` contains 45 nutrition records matching every class in `data/class_mapping.csv`, with columns `food`, `calories_kcal`, `protein_g`, `carbs_g`, `fat_g`, `fiber_g`, `sugar_g`, `typical_serving_g`, `confidence`, and `description` (`confidence` is stored in the CSV and ChromaDB metadata but is not rendered in the `app.py` UI).
+- `data/splits/train.csv`, `data/splits/validation.csv`, and `data/splits/test.csv` store file paths from the original Colab training environment and serve as split records rather than portable local paths.
 
 ## Training & Evaluation Methodology
 
-Training and validation analysis were conducted in `plots/NutriVision_Ai.ipynb` on Google Colab using an NVIDIA Tesla T4 GPU (`PyTorch 2.11.0+cu130`, `Torchvision 0.26.0+cu130`, `SEED = 42`):
+Training and validation analysis were conducted in `notebooks/NutriVision_Ai.ipynb` on Google Colab using an NVIDIA Tesla T4 GPU (`PyTorch 2.11.0+cu130`, `Torchvision 0.26.0+cu130`, `SEED = 42`):
 
 - **Model Initialization:** Fine-tuned ImageNet-pretrained `ConvNeXt_Base_Weights.DEFAULT` and `Swin_B_Weights.DEFAULT` with 45-class linear heads.
 - **Training Augmentations & Optimization:** `RandomResizedCrop(224, scale=(0.75, 1.0))` and `RandomHorizontalFlip(p=0.5)`; `AdamW` (`lr=1e-4`, `weight_decay=0.05`), `CrossEntropyLoss`, `ReduceLROnPlateau` (`mode="max"`, `factor=0.2`, `patience=2`, `min_lr=1e-7`), batch size `8`, CUDA automatic mixed precision (`torch.autocast`), and early stopping (`patience=5`; ConvNeXt Base stopped after 11 epochs and Swin Transformer Base after 12 epochs, each reaching `83.09%` best validation accuracy).
-- **Evaluation Preprocessing:** Offline validation and test evaluation in `plots/NutriVision_Ai.ipynb` used `transforms.Resize(256)` followed by `transforms.CenterCrop(224)` and ImageNet normalization (whereas `app.py` inference resizes uploaded images directly via `transforms.Resize((224, 224))`).
-- **Verification Note:** All metrics below are preserved from the tracked repository artifacts (`final_evaluation_report.json` dated **October 27, 2026**, `final_test_model_comparison.csv`, `validation_model_comparison.csv`, `ensemble_validation_comparison.csv`, and `ensemble_weight_comparison.csv`). Single-model validation metrics, latency benchmarks (CUDA FP16 with GPU warm-up and synchronization), per-class validation metrics, and top confusion counts are verified in `plots/NutriVision_Ai.ipynb`. Ensemble validation comparison, weight-sweep, and test-set comparison metrics are recorded in the tracked CSV/JSON artifacts without standalone CLI evaluation scripts or raw test images in the repository, so those results have not been independently reproduced via an automated test harness.
+- **Evaluation Preprocessing:** Offline validation and test evaluation in `notebooks/NutriVision_Ai.ipynb` used `transforms.Resize(256)` followed by `transforms.CenterCrop(224)` and ImageNet normalization (whereas `app.py` inference resizes uploaded images directly via `transforms.Resize((224, 224))`).
+- **Verification Note:** All metrics below are preserved from the tracked repository artifacts (`results/final_evaluation_report.json` dated **October 27, 2026**, `results/final_test_model_comparison.csv`, `results/validation_model_comparison.csv`, `results/ensemble_validation_comparison.csv`, and `results/ensemble_weight_comparison.csv`). Single-model validation metrics, latency benchmarks (CUDA FP16 with GPU warm-up and synchronization), per-class validation metrics, and top confusion counts are verified in `notebooks/NutriVision_Ai.ipynb`. Ensemble validation comparison, weight-sweep, and test-set comparison metrics are recorded in the tracked CSV/JSON artifacts without standalone CLI evaluation scripts or raw test images in the repository, so those results have not been independently reproduced via an automated test harness.
 
 ## Model Comparison & Evaluation Results
 
@@ -79,41 +79,47 @@ Training and validation analysis were conducted in `plots/NutriVision_Ai.ipynb` 
 | **50/50 Soft-Voting Ensemble** | **84.91** | **86.11** | **84.88** | **84.82** |
 
 - **Ensemble correct test predictions:** 287 / 338
-- **Error analysis artifacts:** Per-class validation scores (`per_class_validation_metrics.csv`, `ensemble_per_class_validation_metrics.csv`), top validation misclassification pairs (`convnext_base_top_confusions.csv`, `swin_base_top_confusions.csv`), and training curves / confusion matrices (`plots/`).
+- **Error analysis artifacts:** Per-class validation scores (`results/per_class_validation_metrics.csv`, `results/ensemble_per_class_validation_metrics.csv`), top validation misclassification pairs (`results/convnext_base_top_confusions.csv`, `results/swin_base_top_confusions.csv`), and training curves / confusion matrices (`plots/`).
 
 ## Repository Structure
 
 ```text
 .
-├── app.py                                    # Streamlit web application (inference, Grad-CAM, nutrition lookup, RAG)
-├── ensemble_config.json                      # Class list, checkpoint paths, soft-voting weights, image size
-├── requirements.txt                          # Runtime Python dependencies for app.py
-├── .gitignore                                # Excludes secrets, model checkpoints, and local ChromaDB stores
+├── .gitignore                                    # Excludes secrets, model checkpoints, and local ChromaDB stores
+├── README.md                                     # Project documentation
+├── app.py                                        # Streamlit web application (inference, Grad-CAM, nutrition lookup, RAG)
+├── ensemble_config.json                          # Class list, checkpoint paths, soft-voting weights, image size
+├── requirements.txt                              # Runtime Python dependencies for app.py
 ├── data/
-│   └── nutrition_45_foods.csv                # 45-class nutritional reference dataset
-├── class_mapping.csv                         # Class name to integer index mapping (45 classes)
-├── train.csv                                 # Training split manifest (1,575 entries)
-├── validation.csv                            # Validation split manifest (337 entries)
-├── test.csv                                  # Test split manifest (338 entries)
-├── final_evaluation_report.json              # Final summary metrics and evaluation metadata
-├── final_test_model_comparison.csv           # Test-set model comparison metrics
-├── validation_model_comparison.csv           # Validation single-model metrics and T4 inference latency
-├── ensemble_validation_comparison.csv        # Validation single-model vs. ensemble metrics
-├── ensemble_weight_comparison.csv            # Validation soft-voting weight sweep results
-├── per_class_validation_metrics.csv          # Per-class validation metrics (ConvNeXt Base and Swin Base)
-├── ensemble_per_class_validation_metrics.csv # Per-class validation metrics (50/50 ensemble)
-├── convnext_base_top_confusions.csv          # Top 15 ConvNeXt Base validation confusions
-├── swin_base_top_confusions.csv            # Top 15 Swin Transformer Base validation confusions
-└── plots/
-    ├── NutriVision_Ai.ipynb                  # Colab notebook for training, validation, RAG indexing, and repo export
-    ├── convnext_base_accuracy.png            # ConvNeXt Base training/validation accuracy curve
-    ├── convnext_base_loss.png                # ConvNeXt Base training/validation loss curve
-    ├── convnext_base_confusion_matrix.png    # ConvNeXt Base validation confusion matrix
-    ├── swin_base_accuracy.png                # Swin Transformer Base training/validation accuracy curve
-    ├── swin_base_loss.png                    # Swin Transformer Base training/validation loss curve
-    ├── swin_base_confusion_matrix.png        # Swin Transformer Base validation confusion matrix
-    ├── convnext_tiny_accuracy.png            # Exploratory ConvNeXt Tiny accuracy curve (not used in ensemble)
-    └── convnext_tiny_loss.png                # Exploratory ConvNeXt Tiny loss curve (not used in ensemble)
+│   ├── class_mapping.csv                         # Class name to integer index mapping (45 classes)
+│   ├── nutrition_45_foods.csv                    # 45-class nutritional reference dataset
+│   └── splits/
+│       ├── train.csv                             # Training split manifest (1,575 entries)
+│       ├── validation.csv                        # Validation split manifest (337 entries)
+│       └── test.csv                              # Test split manifest (338 entries)
+├── models/
+│   └── .gitkeep                                  # Target directory for external .pth checkpoints
+├── notebooks/
+│   └── NutriVision_Ai.ipynb                      # Colab notebook for training, validation, RAG indexing, and repo export
+├── plots/
+│   ├── convnext_base_accuracy.png                # ConvNeXt Base training/validation accuracy curve
+│   ├── convnext_base_loss.png                    # ConvNeXt Base training/validation loss curve
+│   ├── convnext_base_confusion_matrix.png        # ConvNeXt Base validation confusion matrix
+│   ├── swin_base_accuracy.png                    # Swin Transformer Base training/validation accuracy curve
+│   ├── swin_base_loss.png                        # Swin Transformer Base training/validation loss curve
+│   ├── swin_base_confusion_matrix.png            # Swin Transformer Base validation confusion matrix
+│   ├── convnext_tiny_accuracy.png                # Exploratory ConvNeXt Tiny accuracy curve (not used in ensemble)
+│   └── convnext_tiny_loss.png                    # Exploratory ConvNeXt Tiny loss curve (not used in ensemble)
+└── results/
+    ├── final_evaluation_report.json              # Final summary metrics and evaluation metadata
+    ├── final_test_model_comparison.csv           # Test-set model comparison metrics
+    ├── validation_model_comparison.csv           # Validation single-model metrics and T4 inference latency
+    ├── ensemble_validation_comparison.csv        # Validation single-model vs. ensemble metrics
+    ├── ensemble_weight_comparison.csv            # Validation soft-voting weight sweep results
+    ├── per_class_validation_metrics.csv          # Per-class validation metrics (ConvNeXt Base and Swin Base)
+    ├── ensemble_per_class_validation_metrics.csv # Per-class validation metrics (50/50 ensemble)
+    ├── convnext_base_top_confusions.csv          # Top 15 ConvNeXt Base validation confusions
+    └── swin_base_top_confusions.csv            # Top 15 Swin Transformer Base validation confusions
 ```
 
 ## External Prerequisites
@@ -133,11 +139,11 @@ Large binary weights, secrets, vector indices, and raw training images are exclu
 
 3. **Populated ChromaDB Vector Store (Required for RAG Retrieval)**
    - `app.py` opens a persistent ChromaDB client at `data/chroma_db` and accesses collection `nutrivision_food_knowledge`.
-   - Because `chroma_db/` is excluded by `.gitignore` and no standalone indexing `.py` script is included outside `plots/NutriVision_Ai.ipynb`, `data/chroma_db` is absent from a fresh clone. If absent or empty, `app.py` initializes an empty collection and the Nutrition Assistant reports that the food knowledge database is empty.
-   - Reference embeddings in `plots/NutriVision_Ai.ipynb` were generated from the 45 rows of `data/nutrition_45_foods.csv` using `gemini-embedding-001` (`task_type="RETRIEVAL_DOCUMENT"`, 3,072 dimensions) to match the `RETRIEVAL_QUERY` embedding space in `app.py`.
+   - Because `chroma_db/` is excluded by `.gitignore` and no standalone indexing `.py` script is included outside `notebooks/NutriVision_Ai.ipynb`, `data/chroma_db` is absent from a fresh clone. If absent or empty, `app.py` initializes an empty collection and the Nutrition Assistant reports that the food knowledge database is empty.
+   - Reference embeddings in `notebooks/NutriVision_Ai.ipynb` were generated from the 45 rows of `data/nutrition_45_foods.csv` using `gemini-embedding-001` (`task_type="RETRIEVAL_DOCUMENT"`, 3,072 dimensions) to match the `RETRIEVAL_QUERY` embedding space in `app.py`.
 
 4. **Raw Image Dataset (Optional — Only for Retraining or Re-Evaluation)**
-   - The 2,250 raw images referenced by `train.csv`, `validation.csv`, and `test.csv` are not distributed in this repository.
+   - The 2,250 raw images referenced by `data/splits/train.csv`, `data/splits/validation.csv`, and `data/splits/test.csv` are not distributed in this repository.
 
 ## Installation
 
@@ -154,7 +160,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> **Dependencies Note:** `requirements.txt` lists runtime packages required by `app.py` (`streamlit`, `torch`, `torchvision`, `pandas`, `numpy`, `Pillow`, `chromadb`, `google-genai`, `matplotlib`). If GPU acceleration is desired, install the CUDA-enabled PyTorch and TorchVision builds matching the host CUDA runtime. Training and evaluation cells in `plots/NutriVision_Ai.ipynb` additionally use `scikit-learn`, `seaborn`, and `tqdm`.
+> **Dependencies Note:** `requirements.txt` lists runtime packages required by `app.py` (`streamlit`, `torch`, `torchvision`, `pandas`, `numpy`, `Pillow`, `chromadb`, `google-genai`, `matplotlib`). If GPU acceleration is desired, install the CUDA-enabled PyTorch and TorchVision builds matching the host CUDA runtime. Training and evaluation cells in `notebooks/NutriVision_Ai.ipynb` additionally use `scikit-learn`, `seaborn`, and `tqdm`.
 
 ## Configuration
 
@@ -166,7 +172,7 @@ pip install -r requirements.txt
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 ```
 
-3. **Populate ChromaDB (for the Nutrition Assistant):** Ensure `data/chroma_db` contains the `nutrivision_food_knowledge` collection indexed with `gemini-embedding-001` (following the schema in `plots/NutriVision_Ai.ipynb`) before querying the RAG assistant.
+3. **Populate ChromaDB (for the Nutrition Assistant):** Ensure `data/chroma_db` contains the `nutrivision_food_knowledge` collection indexed with `gemini-embedding-001` (following the schema in `notebooks/NutriVision_Ai.ipynb`) before querying the RAG assistant.
 
 ## Usage
 
@@ -187,7 +193,7 @@ streamlit run app.py
 - **Unverified nutritional measurement basis:** Values in `data/nutrition_45_foods.csv` are project estimates whose measurement basis is unverified (values must not be assumed to be per 100 g).
 - **Not medical advice:** Outputs are intended strictly for technical evaluation and educational exploration, not medical, clinical, or dietary guidance.
 - **Inference vs. evaluation transform difference:** `app.py` resizes uploaded images directly to `224 × 224`, whereas notebook evaluation applied `Resize(256)` followed by `CenterCrop(224)`.
-- **No standalone training or evaluation CLI scripts:** Model training, offline evaluation, and ChromaDB indexing live inside `plots/NutriVision_Ai.ipynb` rather than standalone `.py` entrypoints.
+- **No standalone training or evaluation CLI scripts:** Model training, offline evaluation, and ChromaDB indexing live inside `notebooks/NutriVision_Ai.ipynb` rather than standalone `.py` entrypoints.
 - **External RAG dependencies:** The Nutrition Assistant requires both `GEMINI_API_KEY` and a populated `nutrivision_food_knowledge` ChromaDB store at `data/chroma_db`.
 
 ## Contributing
