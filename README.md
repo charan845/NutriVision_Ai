@@ -86,10 +86,11 @@ Training and validation analysis were conducted in `notebooks/NutriVision_Ai.ipy
 ```text
 .
 ├── .gitignore                                    # Excludes secrets, model checkpoints, and local ChromaDB stores
+├── LICENSE                                       # MIT License
 ├── README.md                                     # Project documentation
 ├── app.py                                        # Streamlit web application (inference, Grad-CAM, nutrition lookup, RAG)
 ├── ensemble_config.json                          # Class list, checkpoint paths, soft-voting weights, image size
-├── requirements.txt                              # Runtime Python dependencies for app.py
+├── requirements.txt                              # Runtime Python dependencies for app.py and scripts/
 ├── data/
 │   ├── class_mapping.csv                         # Class name to integer index mapping (45 classes)
 │   ├── nutrition_45_foods.csv                    # 45-class nutritional reference dataset
@@ -110,16 +111,18 @@ Training and validation analysis were conducted in `notebooks/NutriVision_Ai.ipy
 │   ├── swin_base_confusion_matrix.png            # Swin Transformer Base validation confusion matrix
 │   ├── convnext_tiny_accuracy.png                # Exploratory ConvNeXt Tiny accuracy curve (not used in ensemble)
 │   └── convnext_tiny_loss.png                    # Exploratory ConvNeXt Tiny loss curve (not used in ensemble)
-└── results/
-    ├── final_evaluation_report.json              # Final summary metrics and evaluation metadata
-    ├── final_test_model_comparison.csv           # Test-set model comparison metrics
-    ├── validation_model_comparison.csv           # Validation single-model metrics and T4 inference latency
-    ├── ensemble_validation_comparison.csv        # Validation single-model vs. ensemble metrics
-    ├── ensemble_weight_comparison.csv            # Validation soft-voting weight sweep results
-    ├── per_class_validation_metrics.csv          # Per-class validation metrics (ConvNeXt Base and Swin Base)
-    ├── ensemble_per_class_validation_metrics.csv # Per-class validation metrics (50/50 ensemble)
-    ├── convnext_base_top_confusions.csv          # Top 15 ConvNeXt Base validation confusions
-    └── swin_base_top_confusions.csv            # Top 15 Swin Transformer Base validation confusions
+├── results/
+│   ├── final_evaluation_report.json              # Final summary metrics and evaluation metadata
+│   ├── final_test_model_comparison.csv           # Test-set model comparison metrics
+│   ├── validation_model_comparison.csv           # Validation single-model metrics and T4 inference latency
+│   ├── ensemble_validation_comparison.csv        # Validation single-model vs. ensemble metrics
+│   ├── ensemble_weight_comparison.csv            # Validation soft-voting weight sweep results
+│   ├── per_class_validation_metrics.csv          # Per-class validation metrics (ConvNeXt Base and Swin Base)
+│   ├── ensemble_per_class_validation_metrics.csv # Per-class validation metrics (50/50 ensemble)
+│   ├── convnext_base_top_confusions.csv          # Top 15 ConvNeXt Base validation confusions
+│   └── swin_base_top_confusions.csv            # Top 15 Swin Transformer Base validation confusions
+└── scripts/
+    └── build_chroma_db.py                        # Builds data/chroma_db from data/nutrition_45_foods.csv
 ```
 
 ## External Prerequisites
@@ -135,12 +138,12 @@ Large binary weights, secrets, vector indices, and raw training images are exclu
    - Alternate file locations can be configured in `ensemble_config.json`.
 
 2. **Google Gemini API Key (Required for Nutrition Assistant)**
-   - A valid Google Gemini API key is required for query embedding (`gemini-embedding-001`) and response generation (`gemini-2.5-flash`).
+   - A valid Google Gemini API key is required for query/document embedding (`gemini-embedding-001`) and response generation (`gemini-2.5-flash`).
 
 3. **Populated ChromaDB Vector Store (Required for RAG Retrieval)**
    - `app.py` opens a persistent ChromaDB client at `data/chroma_db` and accesses collection `nutrivision_food_knowledge`.
-   - Because `chroma_db/` is excluded by `.gitignore` and no standalone indexing `.py` script is included outside `notebooks/NutriVision_Ai.ipynb`, `data/chroma_db` is absent from a fresh clone. If absent or empty, `app.py` initializes an empty collection and the Nutrition Assistant reports that the food knowledge database is empty.
-   - Reference embeddings in `notebooks/NutriVision_Ai.ipynb` were generated from the 45 rows of `data/nutrition_45_foods.csv` using `gemini-embedding-001` (`task_type="RETRIEVAL_DOCUMENT"`, 3,072 dimensions) to match the `RETRIEVAL_QUERY` embedding space in `app.py`.
+   - Because `chroma_db/` is excluded by `.gitignore`, `data/chroma_db` is absent from a fresh clone. If absent or empty, `app.py` initializes an empty collection and the Nutrition Assistant reports that the food knowledge database is empty.
+   - Run `python scripts/build_chroma_db.py` (with `GEMINI_API_KEY` configured) to index the 45 records from `data/nutrition_45_foods.csv` into `data/chroma_db` using `gemini-embedding-001` (`task_type="RETRIEVAL_DOCUMENT"`).
 
 4. **Raw Image Dataset (Optional — Only for Retraining or Re-Evaluation)**
    - The 2,250 raw images referenced by `data/splits/train.csv`, `data/splits/validation.csv`, and `data/splits/test.csv` are not distributed in this repository.
@@ -160,7 +163,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> **Dependencies Note:** `requirements.txt` lists runtime packages required by `app.py` (`streamlit`, `torch`, `torchvision`, `pandas`, `numpy`, `Pillow`, `chromadb`, `google-genai`, `matplotlib`). If GPU acceleration is desired, install the CUDA-enabled PyTorch and TorchVision builds matching the host CUDA runtime. Training and evaluation cells in `notebooks/NutriVision_Ai.ipynb` additionally use `scikit-learn`, `seaborn`, and `tqdm`.
+> **Dependencies Note:** `requirements.txt` lists runtime packages required by `app.py` and `scripts/build_chroma_db.py` (`streamlit`, `torch`, `torchvision`, `pandas`, `numpy`, `Pillow`, `chromadb`, `google-genai`, `matplotlib`). If GPU acceleration is desired, install the CUDA-enabled PyTorch and TorchVision builds matching the host CUDA runtime. Training and evaluation cells in `notebooks/NutriVision_Ai.ipynb` additionally use `scikit-learn`, `seaborn`, and `tqdm`.
 
 ## Configuration
 
@@ -172,7 +175,13 @@ pip install -r requirements.txt
 GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 ```
 
-3. **Populate ChromaDB (for the Nutrition Assistant):** Ensure `data/chroma_db` contains the `nutrivision_food_knowledge` collection indexed with `gemini-embedding-001` (following the schema in `notebooks/NutriVision_Ai.ipynb`) before querying the RAG assistant.
+3. **Build the ChromaDB vector store (for the Nutrition Assistant):**
+
+```bash
+python scripts/build_chroma_db.py
+```
+
+`scripts/build_chroma_db.py` reads `GEMINI_API_KEY` from the environment or `.streamlit/secrets.toml` and populates `data/chroma_db`.
 
 ## Usage
 
@@ -193,12 +202,12 @@ streamlit run app.py
 - **Unverified nutritional measurement basis:** Values in `data/nutrition_45_foods.csv` are project estimates whose measurement basis is unverified (values must not be assumed to be per 100 g).
 - **Not medical advice:** Outputs are intended strictly for technical evaluation and educational exploration, not medical, clinical, or dietary guidance.
 - **Inference vs. evaluation transform difference:** `app.py` resizes uploaded images directly to `224 × 224`, whereas notebook evaluation applied `Resize(256)` followed by `CenterCrop(224)`.
-- **No standalone training or evaluation CLI scripts:** Model training, offline evaluation, and ChromaDB indexing live inside `notebooks/NutriVision_Ai.ipynb` rather than standalone `.py` entrypoints.
+- **No standalone training or evaluation CLI scripts:** Model training and offline evaluation live inside `notebooks/NutriVision_Ai.ipynb` rather than standalone `.py` entrypoints.
 - **External RAG dependencies:** The Nutrition Assistant requires both `GEMINI_API_KEY` and a populated `nutrivision_food_knowledge` ChromaDB store at `data/chroma_db`.
 
 ## Contributing
 
-Contributions are welcome for documentation improvements, bug fixes, standalone reproducibility scripts (such as ChromaDB indexing and CLI evaluation scripts), and model or UI enhancements.
+Contributions are welcome for documentation improvements, bug fixes, standalone reproducibility scripts (such as CLI evaluation scripts), and model or UI enhancements.
 
 1. Fork the repository and create a feature branch.
 2. Keep pull requests focused, well-tested, and accurately documented.
@@ -207,4 +216,4 @@ Contributions are welcome for documentation improvements, bug fixes, standalone 
 
 ## License
 
-No `LICENSE` file is currently included in this repository. Until an open-source license is added, standard copyright defaults (all rights reserved) apply.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
